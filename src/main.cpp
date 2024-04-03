@@ -268,6 +268,19 @@ int main(int argc, char **argv) {
 	    }
 	}
 #endif
+
+    if (ext_gSettings->mPIDFile) {
+        FILE *fpid;
+        // save pid into file
+        if((fpid = fopen(ext_gSettings->mPIDFile, "w+")) == NULL) {
+            fprintf(stderr, "error open pid file: %s\n", ext_gSettings->mPIDFile);
+            return -1;
+        }
+        fprintf(fpid, "%d", (int)getpid());
+        fflush(fpid);
+        fclose(fpid);
+    }
+
 	// Start up any parallel listener threads
 	if (ext_gSettings->mPortLast) {
 	    listeners_init(ext_gSettings);

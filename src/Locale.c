@@ -79,6 +79,7 @@ Client/Server:\n\
   -l, --len       #[kmKM]    length of buffer in bytes to read or write (Defaults: TCP=128K, v4 UDP=1470, v6 UDP=1450)\n\
   -m, --print_mss          print TCP maximum segment size\n\
   -o, --output    <filename> output the report or error message to this specified file\n\
+  -O, --pidfile            save pid in file\n\
   -p, --port      #        client/server port to listen/send on and to connect\n\
       --permit-key         permit key to be used to verify client and server (TCP only)\n\
       --tcp-tx-delay       set transmit delay\n\

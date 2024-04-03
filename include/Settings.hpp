@@ -163,6 +163,7 @@ struct thread_Settings {
     char*  mHideHost;
     char*  mLocalhost;              // -B
     char*  mOutputFileName;         // -o
+    char*  mPIDFile;                // -O
     char*  mIfrname;                // %<device> name (for rx)
     char*  mIfrnametx;              // %<device> name (for tx)
     char*  mSSMMulticastStr;        // --ssm-host

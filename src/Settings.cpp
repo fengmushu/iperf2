@@ -166,6 +166,7 @@ const struct option long_options[] =
 {"print_mss",        no_argument, NULL, 'm'},
 {"num",        required_argument, NULL, 'n'},
 {"output",     required_argument, NULL, 'o'},
+{"pid_file",   required_argument, NULL, 'O'},
 {"port",       required_argument, NULL, 'p'},
 {"tradeoff",         no_argument, NULL, 'r'},
 {"server",           no_argument, NULL, 's'},
@@ -309,7 +310,7 @@ const struct option env_options[] =
 
 #define SHORT_OPTIONS()
 
-const char short_options[] = "146b:c:def:hi:l:mn:o:p:rst:uvw:x:y:zAB:CDF:H:IL:M:NP:RS:T:UVWXZ:";
+const char short_options[] = "146b:c:def:hi:l:mn:o:p:rst:uvw:x:y:zAB:CDF:H:IL:M:NP:RS:T:UVWXZ:O:";
 
 /* -------------------------------------------------------------------
  * defaults
@@ -346,6 +347,7 @@ void Settings_Initialize (struct thread_Settings *main) {
     //main->mPrintMSS   = false;         // -m,  don't print MSS
     // mAmount is time also              // -n,  N/A
     //main->mOutputFileName = NULL;      // -o,  filename
+    //main->mPIDFile    = NULL;          // -O,  PIDFile
     main->mPort         = 5001;          // -p,  ttcp port
     main->mBindPort     = 0;             // -B,  default port for bind
     // mMode    = kTest_Normal;          // -r,  mMode == kTest_TradeOff
@@ -401,6 +403,10 @@ void Settings_Copy (struct thread_Settings *from, struct thread_Settings **into,
 	    (*into)->mOutputFileName = new char[strlen(from->mOutputFileName) + 1];
 	    strcpy((*into)->mOutputFileName, from->mOutputFileName);
 	}
+	if ( from->mPIDFile != NULL ) {
+	    (*into)->mPIDFile = new char[ strlen(from->mPIDFile) + 1];
+	    strcpy( (*into)->mPIDFile, from->mPIDFile );
+	}
 	if (from->mLocalhost != NULL) {
 	    (*into)->mLocalhost = new char[strlen(from->mLocalhost) + 1];
 	    strcpy((*into)->mLocalhost, from->mLocalhost);
@@ -444,6 +450,7 @@ void Settings_Copy (struct thread_Settings *from, struct thread_Settings **into,
     } else {
 	(*into)->mHost = NULL;
 	(*into)->mOutputFileName = NULL;
+	(*into)->mPIDFile = NULL;
 	(*into)->mLocalhost = NULL;
 	(*into)->mFileName = NULL;
 	(*into)->mHistogramStr = NULL;
@@ -510,6 +517,7 @@ void Settings_Destroy (struct thread_Settings *mSettings) {
     DELETE_ARRAY(mSettings->mLocalhost);
     DELETE_ARRAY(mSettings->mFileName);
     DELETE_ARRAY(mSettings->mOutputFileName);
+    DELETE_ARRAY(mSettings->mPIDFile );
     DELETE_ARRAY(mSettings->mHistogramStr);
     DELETE_ARRAY(mSettings->mSSMMulticastStr);
     DELETE_ARRAY(mSettings->mCongestion);
@@ -698,6 +706,11 @@ void Settings_Interpret (char option, const char *optarg, struct thread_Settings
 	unsetSTDOUT(mExtSettings);
 	mExtSettings->mOutputFileName = new char[strlen(optarg)+1];
 	strcpy(mExtSettings->mOutputFileName, optarg);
+	break;
+	
+    case 'O' : // output the PID into the runtime file
+	mExtSettings->mPIDFile = new char[strlen(optarg)+1];
+	strcpy( mExtSettings->mPIDFile, optarg);
 	break;
 
     case 'p': // server port
@@ -2295,6 +2308,7 @@ void Settings_GenerateListenerSettings (struct thread_Settings *client, struct t
         (*listener)->mHost       = NULL;
         (*listener)->mLocalhost  = NULL;
         (*listener)->mOutputFileName = NULL;
+	(*listener)->mPIDFile    = NULL;
         (*listener)->mMode       = kTest_Normal;
         (*listener)->mThreadMode = kMode_Listener;
         if (client->mHost != NULL) {
