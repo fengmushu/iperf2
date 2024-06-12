@@ -1,4 +1,9 @@
 *.o
 *.a
+*.log
+*.status
+config.h
 Makefile
+stamp-*
 *.deps/
+src/iperf
