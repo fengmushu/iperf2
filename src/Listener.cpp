@@ -675,7 +675,7 @@ int Listener::udp_accept (thread_Settings *server) {
     do {
 	packetID = 0;
 	nread = recvfrom(ListenSocket, server->mBuf, server->mBufLen, 0, \
-			 reinterpret_cast<struct sockaddr*>(&server->peer), &server->size_peer);
+			 reinterpret_cast<struct sockaddr*>(&server->peer), (socklen_t*)&server->size_peer);
 	if (nread > 0) {
 	    // filter and ignore negative sequence numbers, these can be heldover from a previous run
 	    if (isSeqNo64b(mSettings)) {
@@ -714,12 +714,12 @@ int Listener::udp_accept (thread_Settings *server) {
 		rc = connect(server->mSock, reinterpret_cast<struct sockaddr*>(&server->peer), server->size_peer);
 		FAIL_errno(rc == SOCKET_ERROR, "connect UDP", mSettings);
 		server->size_local = sizeof(iperf_sockaddr);
-		getsockname(server->mSock, reinterpret_cast<sockaddr*>(&server->local), &server->size_local);
+		getsockname(server->mSock, reinterpret_cast<sockaddr*>(&server->local), (socklen_t*)&server->size_local);
 		SockAddr_Ifrname(server);
 	    } else {
 		server->size_multicast_group = sizeof(iperf_sockaddr);
 		iperf_sockaddr sent_dstaddr;
-		getsockname(server->mSock, reinterpret_cast<sockaddr*>(&sent_dstaddr), &server->size_multicast_group);
+		getsockname(server->mSock, reinterpret_cast<sockaddr*>(&sent_dstaddr), (socklen_t*)&server->size_multicast_group);
 		int join_send_match = SockAddr_Hostare_Equal(&sent_dstaddr, &server->multicast_group);
 #if DEBUG_MCAST
 		char joinaddr[200];
@@ -795,13 +795,13 @@ int Listener::my_accept (thread_Settings *server) {
 	// note udp_accept will update the active host table
     } else {
 	// accept a TCP  connection
-	server->mSock = accept(ListenSocket, reinterpret_cast<sockaddr*>(&server->peer), &server->size_peer);
+	server->mSock = accept(ListenSocket, reinterpret_cast<sockaddr*>(&server->peer), (socklen_t*)&server->size_peer);
 	if (server->mSock > 0) {
 	    Timestamp now;
 	    server->accept_time.tv_sec = now.getSecs();
 	    server->accept_time.tv_usec = now.getUsecs();
 	    server->size_local = sizeof(iperf_sockaddr);
-	    getsockname(server->mSock, reinterpret_cast<sockaddr*>(&server->local), &server->size_local);
+	    getsockname(server->mSock, reinterpret_cast<sockaddr*>(&server->local), (socklen_t*)&server->size_local);
 	    SockAddr_Ifrname(server);
 	    Iperf_push_host(server);
 	}

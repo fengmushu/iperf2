@@ -99,7 +99,7 @@ void SetSocketOptions (struct thread_Settings *inSettings) {
 	}
 	char cca[TCP_CCA_NAME_MAX] = "";
 	len = sizeof(cca);
-	if (getsockopt(inSettings->mSock, IPPROTO_TCP, TCP_CONGESTION, &cca, &len) == 0) {
+	if (getsockopt(inSettings->mSock, IPPROTO_TCP, TCP_CONGESTION, &cca, (socklen_t*)&len) == 0) {
 	    cca[TCP_CCA_NAME_MAX-1]='\0';
 	    if (strcmp(cca, inSettings->mCongestion) != 0) {
 		fprintf(stderr, "Failed to set '%s' congestion control got '%s'\n", inSettings->mCongestion, cca);
@@ -118,7 +118,7 @@ void SetSocketOptions (struct thread_Settings *inSettings) {
 	}
 	char cca[TCP_CCA_NAME_MAX] = "";
 	len = sizeof(cca);
-	if (getsockopt(inSettings->mSock, IPPROTO_TCP, TCP_CONGESTION, &cca, &len) == 0) {
+	if (getsockopt(inSettings->mSock, IPPROTO_TCP, TCP_CONGESTION, &cca, (socklen_t*)&len) == 0) {
 	    cca[TCP_CCA_NAME_MAX-1]='\0';
 	    if (strcmp(cca, inSettings->mLoadCCA) != 0) {
 		fprintf(stderr, "Failed to set '%s' load congestion control got '%s'\n", inSettings->mLoadCCA, cca);
@@ -246,7 +246,7 @@ void SetSocketOptions (struct thread_Settings *inSettings) {
 	    // Read the socket setting, could be set on by kernel
 	    if (isEnhanced(inSettings) && (rc == 0)) {
 		rc = getsockopt(inSettings->mSock, IPPROTO_TCP, TCP_NODELAY,
-				reinterpret_cast<char*>(&nodelay), &len);
+				reinterpret_cast<char*>(&nodelay), (socklen_t*)&len);
 		WARN_errno(rc == SOCKET_ERROR, "getsockopt TCP_NODELAY");
 		if (rc == 0) {
 		    if (nodelay)
@@ -356,7 +356,7 @@ void SetSocketOptionsIPTos (struct thread_Settings *mSettings, int tos) {
 				(isIPV6(mSettings) ? IPV6_TCLASS : IP_TOS), reinterpret_cast<char*>(&reqtos), len);
 	    WARN_errno(rc == SOCKET_ERROR, (isIPV6(mSettings) ? "setsockopt IPV6_TCLASS" : "setsockopt IP_TOS"));
 	    rc = getsockopt(mSettings->mSock, (isIPV6(mSettings) ? IPPROTO_IPV6 : IPPROTO_IP), \
-			    (isIPV6(mSettings) ? IPV6_TCLASS : IP_TOS), reinterpret_cast<char*>(&reqtos), &len);
+			    (isIPV6(mSettings) ? IPV6_TCLASS : IP_TOS), reinterpret_cast<char*>(&reqtos), (socklen_t*)&len);
 	    WARN_errno(rc == SOCKET_ERROR, (isIPV6(mSettings) ? "getsockopt IPV6_TCLASS" : "getsockopt IP_TOS"));
 	    if (reqtos != tos) {
 		char warnbuf[256];
@@ -536,7 +536,7 @@ int getsock_tcp_mss  (int inSock) {
 
     /* query for MSS */
     len = sizeof(theMSS);
-    rc = getsockopt(inSock, IPPROTO_TCP, TCP_MAXSEG, (char*)&theMSS, &len);
+    rc = getsockopt(inSock, IPPROTO_TCP, TCP_MAXSEG, (char*)&theMSS, (socklen_t*)&len);
     WARN_errno(rc == SOCKET_ERROR, "getsockopt TCP_MAXSEG");
 #endif
     return theMSS;

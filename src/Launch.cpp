@@ -207,7 +207,7 @@ static void clientside_client_reverse (struct thread_Settings *thread,  \
 	setReverse(reverse_client);
 	setNoUDPfin(reverse_client); // disable the fin report - no need
 	reverse_client->size_local = sizeof(iperf_sockaddr);
-	getsockname(reverse_client->mSock, reinterpret_cast<sockaddr*>(&reverse_client->local), &reverse_client->size_local);
+	getsockname(reverse_client->mSock, reinterpret_cast<sockaddr*>(&reverse_client->local), (socklen_t*)&reverse_client->size_local);
 	Iperf_push_host(reverse_client);
 	thread_start(reverse_client);
 	if (theClient->myJob)

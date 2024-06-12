@@ -250,8 +250,8 @@ bool Client::my_connect (bool close_on_fail) {
 	}
 #endif
 	// Set the send timeout for the very first write which has the test exchange
-	getsockname(mySocket, reinterpret_cast<sockaddr*>(&mSettings->local), &mSettings->size_local);
-	getpeername(mySocket, reinterpret_cast<sockaddr*>(&mSettings->peer), &mSettings->size_peer);
+	getsockname(mySocket, reinterpret_cast<sockaddr*>(&mSettings->local), (socklen_t*)&mSettings->size_local);
+	getpeername(mySocket, reinterpret_cast<sockaddr*>(&mSettings->peer), (socklen_t*)&mSettings->size_peer);
 	SockAddr_Ifrname(mSettings);
 #ifdef DEFAULT_PAYLOAD_LEN_PER_MTU_DISCOVERY
 	if (isUDP(mSettings) && !isBuflenSet(mSettings)) {

@@ -151,10 +151,10 @@ int getsock_tcp_windowsize (int inSock, int inSend) {
     len = sizeof(theTCPWin);
     if (inSend) {
         rc = getsockopt(inSock, SOL_SOCKET, SO_SNDBUF,
-                         (char*) &theTCPWin, &len);
+                         (char*) &theTCPWin, (unsigned *)&len);
     } else {
         rc = getsockopt(inSock, SOL_SOCKET, SO_RCVBUF,
-                         (char*) &theTCPWin, &len);
+                         (char*) &theTCPWin, (unsigned *)&len);
     }
     if (rc == 0) {
         rc = theTCPWin;
@@ -184,7 +184,7 @@ int getsock_tcp_windowclamp (int inSock) {
 
     /* send buffer -- query for buffer size */
     len = sizeof(clamp);
-    rc = getsockopt(inSock, IPPROTO_TCP, TCP_WINDOW_CLAMP, (char*)(&clamp), &len);
+    rc = getsockopt(inSock, IPPROTO_TCP, TCP_WINDOW_CLAMP, (char*)(&clamp), (unsigned *)&len);
     WARN_errno(rc == SOCKET_ERROR, "getsockopt TCP_WINDOW_CLAMP");
     if (rc < 0) {
 	return rc;
@@ -214,7 +214,7 @@ int getsock_tcp_notsent_low_watermark (int inSock) {
 
     /* send buffer -- query for buffer size */
     len = sizeof(watermark);
-    rc = getsockopt(inSock, IPPROTO_TCP, TCP_NOTSENT_LOWAT, (char*)(&watermark), &len);
+    rc = getsockopt(inSock, IPPROTO_TCP, TCP_NOTSENT_LOWAT, (char*)(&watermark), (unsigned *)&len);
     WARN_errno(rc == SOCKET_ERROR, "getsockopt TCP_NOTSENT_LOWAT");
     if (rc < 0) {
 	return rc;
